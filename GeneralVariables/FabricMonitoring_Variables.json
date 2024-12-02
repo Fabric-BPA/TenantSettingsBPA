@@ -1,0 +1,9 @@
+{
+    "tenantId": "<your tenant id goes here>",
+    "clientId":  "<the client id gets here>",
+    "nameOfTheKeyVault": "minceddataAzureKeyVault",
+    "nameOfTheKey": "<name of the secret>",
+    "filepathTenantSettings": "Files/FabricMonitoring/TenantSettings/",
+    "theLakehouse": "theLakehouse",
+    "deltaTablePrefix": "fabricmonitoring_"
+}
