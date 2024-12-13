@@ -1,0 +1,96 @@
+{
+  "config": "{\"version\":\"5.54\",\"themeCollection\":{\"baseTheme\":{\"name\":\"CY23SU04\",\"version\":\"5.44\",\"type\":2},\"customTheme\":{\"name\":\"Fellowmind-Fellow5183049619569073.json\",\"version\":\"5.46\",\"type\":1}},\"activeSectionIndex\":0,\"defaultDrillFilterOtherVisuals\":true,\"slowDataSourceSettings\":{\"isCrossHighlightingDisabled\":false,\"isSlicerSelectionsButtonEnabled\":false,\"isFilterSelectionsButtonEnabled\":false,\"isFieldWellButtonEnabled\":false,\"isApplyAllButtonEnabled\":false},\"linguisticSchemaSyncVersion\":2,\"settings\":{\"useNewFilterPaneExperience\":true,\"allowChangeFilterTypes\":true,\"useStylableVisualContainerHeader\":true,\"queryLimitOption\":6,\"useEnhancedTooltips\":true,\"exportDataMode\":1,\"useDefaultAggregateDisplayName\":true},\"objects\":{\"section\":[{\"properties\":{\"verticalAlignment\":{\"expr\":{\"Literal\":{\"Value\":\"'Top'\"}}}}}],\"outspacePane\":[{\"properties\":{\"visible\":{\"expr\":{\"Literal\":{\"Value\":\"false\"}}},\"expanded\":{\"expr\":{\"Literal\":{\"Value\":\"false\"}}}}}]}}",
+  "layoutOptimization": 0,
+  "publicCustomVisuals": [
+    "textFilter25A4896A83E0487089E2B90C9AE57C8A"
+  ],
+  "resourcePackages": [
+    {
+      "resourcePackage": {
+        "disabled": false,
+        "items": [
+          {
+            "name": "CY23SU04",
+            "path": "BaseThemes/CY23SU04.json",
+            "type": 202
+          }
+        ],
+        "name": "SharedResources",
+        "type": 2
+      }
+    },
+    {
+      "resourcePackage": {
+        "disabled": false,
+        "items": [
+          {
+            "name": "Fellowmind-Fellow5183049619569073.json",
+            "path": "Fellowmind-Fellow5183049619569073.json",
+            "type": 201
+          }
+        ],
+        "name": "RegisteredResources",
+        "type": 1
+      }
+    }
+  ],
+  "sections": [
+    {
+      "config": "{}",
+      "displayName": "Tenant settings",
+      "displayOption": 1,
+      "filters": "[]",
+      "height": 720.00,
+      "name": "ReportSection",
+      "visualContainers": [
+        {
+          "config": "{\"name\":\"17c8c6fdc379b027884d\",\"layouts\":[{\"id\":0,\"position\":{\"x\":472,\"y\":472,\"z\":2000,\"width\":768,\"height\":200,\"tabOrder\":0}}],\"singleVisual\":{\"visualType\":\"tableEx\",\"projections\":{\"Values\":[{\"queryRef\":\"enabledSecurityGroups.enabledSecurityGroups.name\"},{\"queryRef\":\"tenantSettings.title\"}]},\"prototypeQuery\":{\"Version\":2,\"From\":[{\"Name\":\"e\",\"Entity\":\"enabledSecurityGroups\",\"Type\":0},{\"Name\":\"t\",\"Entity\":\"tenantSettings\",\"Type\":0}],\"Select\":[{\"Column\":{\"Expression\":{\"SourceRef\":{\"Source\":\"e\"}},\"Property\":\"enabledSecurityGroups.name\"},\"Name\":\"enabledSecurityGroups.enabledSecurityGroups.name\",\"NativeReferenceName\":\"Security Group\"},{\"Column\":{\"Expression\":{\"SourceRef\":{\"Source\":\"t\"}},\"Property\":\"title\"},\"Name\":\"tenantSettings.title\",\"NativeReferenceName\":\"Setting description\"}],\"OrderBy\":[{\"Direction\":1,\"Expression\":{\"Column\":{\"Expression\":{\"SourceRef\":{\"Source\":\"e\"}},\"Property\":\"enabledSecurityGroups.name\"}}}]},\"columnProperties\":{\"enabledSecurityGroups.enabledSecurityGroups.name\":{\"displayName\":\"Security Group\"},\"tenantSettings.title\":{\"displayName\":\"Setting description\"}},\"drillFilterOtherVisuals\":true,\"vcObjects\":{\"title\":[{\"properties\":{\"show\":{\"expr\":{\"Literal\":{\"Value\":\"true\"}}},\"text\":{\"expr\":{\"Literal\":{\"Value\":\"'Setting security groups'\"}}}}}]}}}",
+          "filters": "[]",
+          "height": 200.00,
+          "width": 768.00,
+          "x": 472.00,
+          "y": 472.00,
+          "z": 2000.00
+        },
+        {
+          "config": "{\"name\":\"8d195efb2f47528507d6\",\"layouts\":[{\"id\":0,\"position\":{\"x\":472,\"y\":80,\"z\":1000,\"width\":768,\"height\":376,\"tabOrder\":4000}}],\"singleVisual\":{\"visualType\":\"pivotTable\",\"projections\":{\"Rows\":[{\"queryRef\":\"tenantSettings.tenantSettingGroup\",\"active\":true},{\"queryRef\":\"tenantSettings.title\",\"active\":true},{\"queryRef\":\"bestPractiseRules.Name\",\"active\":true}],\"Values\":[{\"queryRef\":\"tenantSettings.Is enabled\"},{\"queryRef\":\"tenantSettings.Security Group\"}]},\"prototypeQuery\":{\"Version\":2,\"From\":[{\"Name\":\"t\",\"Entity\":\"tenantSettings\",\"Type\":0},{\"Name\":\"b\",\"Entity\":\"bestPractiseRules\",\"Type\":0}],\"Select\":[{\"Column\":{\"Expression\":{\"SourceRef\":{\"Source\":\"t\"}},\"Property\":\"title\"},\"Name\":\"tenantSettings.title\",\"NativeReferenceName\":\"title\"},{\"Measure\":{\"Expression\":{\"SourceRef\":{\"Source\":\"t\"}},\"Property\":\"Is enabled\"},\"Name\":\"tenantSettings.Is enabled\",\"NativeReferenceName\":\"Is enabled\"},{\"Column\":{\"Expression\":{\"SourceRef\":{\"Source\":\"t\"}},\"Property\":\"tenantSettingGroup\"},\"Name\":\"tenantSettings.tenantSettingGroup\",\"NativeReferenceName\":\"Setting group\"},{\"Measure\":{\"Expression\":{\"SourceRef\":{\"Source\":\"t\"}},\"Property\":\"Can specify security group\"},\"Name\":\"tenantSettings.Security Group\",\"NativeReferenceName\":\"Security Group\"},{\"Column\":{\"Expression\":{\"SourceRef\":{\"Source\":\"b\"}},\"Property\":\"Name\"},\"Name\":\"bestPractiseRules.Name\",\"NativeReferenceName\":\"Name\"}],\"OrderBy\":[{\"Direction\":2,\"Expression\":{\"Measure\":{\"Expression\":{\"SourceRef\":{\"Source\":\"t\"}},\"Property\":\"Can specify security group\"}}}]},\"expansionStates\":[{\"roles\":[\"Rows\"],\"levels\":[{\"queryRefs\":[\"tenantSettings.tenantSettingGroup\"],\"identityKeys\":[{\"Column\":{\"Expression\":{\"SourceRef\":{\"Entity\":\"tenantSettings\"}},\"Property\":\"tenantSettingGroup\"}}],\"isPinned\":true},{\"queryRefs\":[\"tenantSettings.title\"],\"isCollapsed\":true,\"identityKeys\":[{\"Column\":{\"Expression\":{\"SourceRef\":{\"Entity\":\"tenantSettings\"}},\"Property\":\"title\"}}],\"isPinned\":true},{\"queryRefs\":[\"bestPractiseRules.Name\"],\"isCollapsed\":true,\"isPinned\":true}],\"root\":{\"identityValues\":null,\"children\":[{\"identityValues\":[{\"Literal\":{\"Value\":\"'Export and sharing settings'\"}}],\"children\":[{\"identityValues\":[{\"Literal\":{\"Value\":\"'Publish to web'\"}}],\"isToggled\":true}]}]}}],\"columnProperties\":{\"tenantSettings.tenantSettingGroup\":{\"displayName\":\"Setting group\"}},\"drillFilterOtherVisuals\":true,\"objects\":{\"subTotals\":[{\"properties\":{\"columnSubtotals\":{\"expr\":{\"Literal\":{\"Value\":\"false\"}}},\"rowSubtotals\":{\"expr\":{\"Literal\":{\"Value\":\"false\"}}}}}],\"columnHeaders\":[{\"properties\":{\"autoSizeColumnWidth\":{\"expr\":{\"Literal\":{\"Value\":\"false\"}}}}}],\"columnWidth\":[{\"properties\":{\"value\":{\"expr\":{\"Literal\":{\"Value\":\"65D\"}}}},\"selector\":{\"metadata\":\"tenantSettings.Is enabled\"}},{\"properties\":{\"value\":{\"expr\":{\"Literal\":{\"Value\":\"66.33461069467592D\"}}}},\"selector\":{\"metadata\":\"tenantSettings.Security Group\"}},{\"properties\":{\"value\":{\"expr\":{\"Literal\":{\"Value\":\"541D\"}}}},\"selector\":{\"metadata\":\"tenantSettings.tenantSettingGroup\"}}],\"values\":[{\"properties\":{\"icon\":{\"kind\":\"Icon\",\"layout\":{\"expr\":{\"Literal\":{\"Value\":\"'Before'\"}}},\"verticalAlignment\":{\"expr\":{\"Literal\":{\"Value\":\"'Top'\"}}},\"value\":{\"expr\":{\"Measure\":{\"Expression\":{\"SourceRef\":{\"Entity\":\"bestPractiseRules\"}},\"Property\":\"BPA Icon\"}}}}},\"selector\":{\"data\":[{\"dataViewWildcard\":{\"matchingOption\":1}}],\"metadata\":\"tenantSettings.Is enabled\"}}],\"general\":[{\"properties\":{\"layout\":{\"expr\":{\"Literal\":{\"Value\":\"'Compact'\"}}}}}]},\"vcObjects\":{\"title\":[{\"properties\":{\"show\":{\"expr\":{\"Literal\":{\"Value\":\"true\"}}},\"text\":{\"expr\":{\"Literal\":{\"Value\":\"'Settings'\"}}}}}],\"visualTooltip\":[{\"properties\":{\"show\":{\"expr\":{\"Literal\":{\"Value\":\"true\"}}},\"type\":{\"expr\":{\"Literal\":{\"Value\":\"'Canvas'\"}}},\"section\":{\"expr\":{\"Literal\":{\"Value\":\"'ReportSectioneb1f41d390c833757c70'\"}}}}}]}}}",
+          "filters": "[]",
+          "height": 376.00,
+          "width": 768.00,
+          "x": 472.00,
+          "y": 80.00,
+          "z": 1000.00
+        },
+        {
+          "config": "{\"name\":\"9970f7e2adb27811f239\",\"layouts\":[{\"id\":0,\"position\":{\"x\":40,\"y\":80,\"z\":0,\"width\":416,\"height\":592,\"tabOrder\":3000}}],\"singleVisual\":{\"visualType\":\"slicer\",\"projections\":{\"Values\":[{\"queryRef\":\"tenantSettings.tenantSettingGroup\",\"active\":true}]},\"prototypeQuery\":{\"Version\":2,\"From\":[{\"Name\":\"t\",\"Entity\":\"tenantSettings\",\"Type\":0}],\"Select\":[{\"Column\":{\"Expression\":{\"SourceRef\":{\"Source\":\"t\"}},\"Property\":\"tenantSettingGroup\"},\"Name\":\"tenantSettings.tenantSettingGroup\",\"NativeReferenceName\":\"tenantSettingGroup\"}]},\"drillFilterOtherVisuals\":true,\"objects\":{\"data\":[{\"properties\":{\"mode\":{\"expr\":{\"Literal\":{\"Value\":\"'Basic'\"}}}}}],\"header\":[{\"properties\":{\"show\":{\"expr\":{\"Literal\":{\"Value\":\"false\"}}}}}],\"general\":[{\"properties\":{\"orientation\":{\"expr\":{\"Literal\":{\"Value\":\"1D\"}}},\"outlineColor\":{\"solid\":{\"color\":{\"expr\":{\"Literal\":{\"Value\":\"'#F05027'\"}}}}}}}]},\"vcObjects\":{\"title\":[{\"properties\":{\"show\":{\"expr\":{\"Literal\":{\"Value\":\"true\"}}},\"text\":{\"expr\":{\"Literal\":{\"Value\":\"'Setting groups'\"}}}}}]}}}",
+          "filters": "[]",
+          "height": 592.00,
+          "width": 416.00,
+          "x": 40.00,
+          "y": 80.00,
+          "z": 0.00
+        },
+        {
+          "config": "{\"name\":\"bac678230029d9be0189\",\"layouts\":[{\"id\":0,\"position\":{\"x\":935.9999999999999,\"y\":8,\"z\":3000,\"width\":304,\"height\":72,\"tabOrder\":1000}}],\"singleVisual\":{\"visualType\":\"textFilter25A4896A83E0487089E2B90C9AE57C8A\",\"projections\":{\"field\":[{\"queryRef\":\"tenantSettings.title\"}]},\"prototypeQuery\":{\"Version\":2,\"From\":[{\"Name\":\"t\",\"Entity\":\"tenantSettings\",\"Type\":0}],\"Select\":[{\"Column\":{\"Expression\":{\"SourceRef\":{\"Source\":\"t\"}},\"Property\":\"title\"},\"Name\":\"tenantSettings.title\",\"NativeReferenceName\":\"title\"}]},\"drillFilterOtherVisuals\":true,\"objects\":{\"general\":[{\"properties\":{}}]},\"vcObjects\":{\"title\":[{\"properties\":{\"text\":{\"expr\":{\"Literal\":{\"Value\":\"'Setting search'\"}}}}}],\"border\":[{\"properties\":{\"show\":{\"expr\":{\"Literal\":{\"Value\":\"false\"}}}}}]}}}",
+          "filters": "[]",
+          "height": 72.00,
+          "width": 304.00,
+          "x": 936.00,
+          "y": 8.00,
+          "z": 3000.00
+        },
+        {
+          "config": "{\"name\":\"ea4fe0d6a9e91508c082\",\"layouts\":[{\"id\":0,\"position\":{\"x\":40,\"y\":8,\"z\":4000,\"width\":888,\"height\":72,\"tabOrder\":2000}}],\"singleVisual\":{\"visualType\":\"textbox\",\"drillFilterOtherVisuals\":true,\"objects\":{\"general\":[{\"properties\":{\"paragraphs\":[{\"textRuns\":[{\"value\":\"Power BI Tenant Settings\",\"textStyle\":{\"fontSize\":\"32pt\"}}]}]}}]},\"vcObjects\":{\"border\":[{\"properties\":{\"show\":{\"expr\":{\"Literal\":{\"Value\":\"false\"}}}}}]}}}",
+          "filters": "[]",
+          "height": 72.00,
+          "width": 888.00,
+          "x": 40.00,
+          "y": 8.00,
+          "z": 4000.00
+        }
+      ],
+      "width": 1280.00
+    }
+  ],
+  "theme": "Fellowmind-Fellow5183049619569073.json"
+}

@@ -1,0 +1,991 @@
+{
+  "compatibilityLevel": 1567,
+  "model": {
+    "annotations": [
+      {
+        "name": "PBI_QueryOrder",
+        "value": "[\"JsonResponse\",\"tenantSettings\",\"enabledSecurityGroups\",\"GetTenantSettingsAPIEndpoint\",\"BPARulesFile\",\"ClientID\",\"ClientSecret\",\"TenantID\",\"AccessToken\",\"GetToken\",\"Expanded tenantSettings\",\"assertSetting (PublishToWeb = false)\",\"assertSetting (PublishToWeb = true)\",\"bestPractiseRules\"]"
+      },
+      {
+        "name": "__PBI_TimeIntelligenceEnabled",
+        "value": "1"
+      },
+      {
+        "name": "PBIDesktopVersion",
+        "value": "2.138.1452.0 (24.11)"
+      },
+      {
+        "name": "PBI_ProTooling",
+        "value": "[\"DevMode\"]"
+      }
+    ],
+    "culture": "en-US",
+    "cultures": [
+      {
+        "name": "en-US",
+        "linguisticMetadata": {
+          "content": {
+            "Language": "en-US",
+            "Version": "1.0.0"
+          },
+          "contentType": "json"
+        }
+      }
+    ],
+    "dataAccessOptions": {
+      "legacyRedirects": true,
+      "returnErrorValuesAsNull": true
+    },
+    "defaultPowerBIDataSourceVersion": "powerBI_V3",
+    "expressions": [
+      {
+        "name": "ClientID",
+        "annotations": [
+          {
+            "name": "PBI_ResultType",
+            "value": "Text"
+          }
+        ],
+        "description": "Insert Client ID from Azure App Registration.",
+        "expression": "\"<Insert Client ID>\" meta [IsParameterQuery=true, Type=\"Text\", IsParameterQueryRequired=true]",
+        "kind": "m",
+        "lineageTag": "9cda423f-3a10-468b-92de-9fea135a53ea",
+        "queryGroup": "Parameters"
+      },
+      {
+        "name": "ClientSecret",
+        "annotations": [
+          {
+            "name": "PBI_ResultType",
+            "value": "Text"
+          }
+        ],
+        "description": "Insert Client Secret from Azure App Registration.",
+        "expression": "\"<Insert Client Secret>\" meta [IsParameterQuery=true, Type=\"Text\", IsParameterQueryRequired=true]",
+        "kind": "m",
+        "lineageTag": "ef29a5d0-33bf-4bf9-b893-44ae200e6942",
+        "queryGroup": "Parameters"
+      },
+      {
+        "name": "TenantID",
+        "annotations": [
+          {
+            "name": "PBI_ResultType",
+            "value": "Text"
+          }
+        ],
+        "description": [
+          "Insert Tenant ID (uniqueidentifier) for Microsoft 365 Tenant or Power BI tenant.",
+          "https://entra.microsoft.com/#view/Microsoft_AAD_IAM/TenantOverview.ReactView"
+        ],
+        "expression": "\"<Insert Tenant ID>\" meta [IsParameterQuery=true, Type=\"Text\", IsParameterQueryRequired=true]",
+        "kind": "m",
+        "lineageTag": "588e2107-372c-47d1-839d-a65a5ae52546",
+        "queryGroup": "Parameters"
+      },
+      {
+        "name": "GetToken",
+        "annotations": [
+          {
+            "name": "PBI_NavigationStepName",
+            "value": "Navigation"
+          },
+          {
+            "name": "PBI_ResultType",
+            "value": "Function"
+          }
+        ],
+        "expression": [
+          "() =>",
+          "    let",
+          "        TenantGUID = TenantID,",
+          "        ApplicationID = ClientID,",
+          "        ApplicationSecret = ClientSecret,",
+          "        OAuthUrl = Text.Combine({\"https://login.microsoftonline.com/\", TenantGUID, \"/oauth2/token\"}),",
+          "        webClientId = Text.Combine({\"client_id\", ApplicationID}, \"=\"),",
+          "        webClientSecret = Text.Combine({\"client_secret\", Uri.EscapeDataString(ApplicationSecret)}, \"=\"),",
+          "        GrantType = Text.Combine({\"grant_type\", \"client_credentials\"}, \"=\"),",
+          "        Body = Text.Combine(",
+          "            {\"resource=https://analysis.windows.net/powerbi/api\", webClientId, webClientSecret, GrantType}, \"&\"",
+          "        ),",
+          "        AuthResponse = Json.Document(Web.Contents(OAuthUrl, [",
+          "            Content = Text.ToBinary(Body)",
+          "        ])),",
+          "        AccessToken = AuthResponse[access_token]",
+          "    in",
+          "        AccessToken"
+        ],
+        "kind": "m",
+        "lineageTag": "234cdcee-dd58-4739-b6cf-50a78d5c190e",
+        "queryGroup": "Extract\\Anonymous Authorization"
+      },
+      {
+        "name": "JsonResponse",
+        "annotations": [
+          {
+            "name": "PBI_NavigationStepName",
+            "value": "Navigation"
+          },
+          {
+            "name": "PBI_ResultType",
+            "value": "Text"
+          }
+        ],
+        "expression": [
+          "let",
+          "    Source = Web.Contents(",
+          "            \"https://api.powerbi.com/v1/admin/tenantsettings\",",
+          "            [",
+          "                Headers = [",
+          "                    Authorization = \"Bearer \" & AccessToken",
+          "                ]",
+          "            ]",
+          "        ),",
+          "    tenantSettings = Text.FromBinary(Source)",
+          "in",
+          "    tenantSettings"
+        ],
+        "kind": "m",
+        "lineageTag": "17022f29-e279-4348-83be-7d27a5763b13",
+        "queryGroup": "Extract"
+      },
+      {
+        "name": "GetTenantSettingsAPIEndpoint",
+        "annotations": [
+          {
+            "name": "PBI_ResultType",
+            "value": "Text"
+          }
+        ],
+        "description": [
+          "API endpoint for Power BI Tenants Settings.",
+          "The GetTenantSettings API returns all tenant settings in a single JSON response.",
+          "To call the API, you need to have administrator rights (such as Office 365 Global Administrator or Power BI Administrator) or authenticate using a service principal."
+        ],
+        "expression": "\"https://api.powerbi.com/v1/admin/tenantsettings\" meta [IsParameterQuery=true, Type=\"Text\", IsParameterQueryRequired=true]",
+        "kind": "m",
+        "lineageTag": "3f8e8417-b029-46bc-8c7d-a50392a2f814",
+        "queryGroup": "Parameters"
+      },
+      {
+        "name": "AccessToken",
+        "annotations": [
+          {
+            "name": "PBI_ResultType",
+            "value": "Text"
+          },
+          {
+            "name": "PBI_NavigationStepName",
+            "value": "Navigation"
+          }
+        ],
+        "description": "Manually generated access token. Also called a Baerer token. When supplied it must be manually renewed periodically.",
+        "expression": "\"eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsIng1dCI6Ii1LSTNROW5OUjdiUm9meG1lWm9YcWJIWkdldyIsImtpZCI6Ii1LSTNROW5OUjdiUm9meG1lWm9YcWJIWkdldyJ9.eyJhdWQiOiJodHRwczovL2FuYWx5c2lzLndpbmRvd3MubmV0L3Bvd2VyYmkvYXBpIiwiaXNzIjoiaHR0cHM6Ly9zdHMud2luZG93cy5uZXQvNDczODQ3NTQtM2M4YS00NTlmLThiZDMtMzJkY2NmZTUwNjUyLyIsImlhdCI6MTY5NjgzNzExNSwibmJmIjoxNjk2ODM3MTE1LCJleHAiOjE2OTY4NDEwMjMsImFjY3QiOjAsImFjciI6IjEiLCJhaW8iOiJBVlFBcS84VUFBQUFiVXIzUlZiY0MzeXpLZUlVclpvSkcrYVhCY1VEYmRiOGhTWlE4QXI3VENBR3dMRCs2d2JVaWF3dXRvd082MEl2NGNMWlE3bG1ROC9MVXFtd0JBWDdBZFFmU3lRS3AxWnJKbmRFYXlVYjFLTT0iLCJhbXIiOlsicHdkIiwibWZhIl0sImFwcGlkIjoiMThmYmNhMTYtMjIyNC00NWY2LTg1YjAtZjdiZjJiMzliM2YzIiwiYXBwaWRhY3IiOiIwIiwiZmFtaWx5X25hbWUiOiJBZG1pbmlzdHJhdG9yIiwiZ2l2ZW5fbmFtZSI6IkRldiBFc3NlbnRpYWxzIiwiaXBhZGRyIjoiODAuMjA4LjY2LjE3NyIsIm5hbWUiOiJEZXYgRXNzZW50aWFscyBBZG1pbmlzdHJhdG9yIiwib2lkIjoiMjE4NTU1ZDEtMTUyYS00NzQzLWJmNGMtZmIxODQwNTc1MjEwIiwicHVpZCI6IjEwMDMyMDAxMzFGODI0OEYiLCJyaCI6IjAuQVlFQVZFYzRSNG84bjBXTDB6TGN6LVVHVWdrQUFBQUFBQUFBd0FBQUFBQUFBQUNCQU80LiIsInNjcCI6IkFwcC5SZWFkLkFsbCBDYXBhY2l0eS5SZWFkLkFsbCBDYXBhY2l0eS5SZWFkV3JpdGUuQWxsIENvbnRlbnQuQ3JlYXRlIERhc2hib2FyZC5SZWFkLkFsbCBEYXNoYm9hcmQuUmVhZFdyaXRlLkFsbCBEYXRhZmxvdy5SZWFkLkFsbCBEYXRhZmxvdy5SZWFkV3JpdGUuQWxsIERhdGFzZXQuUmVhZC5BbGwgRGF0YXNldC5SZWFkV3JpdGUuQWxsIEdhdGV3YXkuUmVhZC5BbGwgR2F0ZXdheS5SZWFkV3JpdGUuQWxsIFBpcGVsaW5lLkRlcGxveSBQaXBlbGluZS5SZWFkLkFsbCBQaXBlbGluZS5SZWFkV3JpdGUuQWxsIFJlcG9ydC5SZWFkLkFsbCBSZXBvcnQuUmVhZFdyaXRlLkFsbCBTdG9yYWdlQWNjb3VudC5SZWFkLkFsbCBTdG9yYWdlQWNjb3VudC5SZWFkV3JpdGUuQWxsIFRlbmFudC5SZWFkLkFsbCBUZW5hbnQuUmVhZFdyaXRlLkFsbCBVc2VyU3RhdGUuUmVhZFdyaXRlLkFsbCBXb3Jrc3BhY2UuUmVhZC5BbGwgV29ya3NwYWNlLlJlYWRXcml0ZS5BbGwiLCJzaWduaW5fc3RhdGUiOlsia21zaSJdLCJzdWIiOiJfMXBMczlGSFlMR2VrcnN4ZGxTb1g5bkZ0VVd5dEppLXhmdnU0ejE2OUw0IiwidGlkIjoiNDczODQ3NTQtM2M4YS00NTlmLThiZDMtMzJkY2NmZTUwNjUyIiwidW5pcXVlX25hbWUiOiJhZG1pbkBjdG0zNjVkZXYub25taWNyb3NvZnQuY29tIiwidXBuIjoiYWRtaW5AY3RtMzY1ZGV2Lm9ubWljcm9zb2Z0LmNvbSIsInV0aSI6InZxVC05SGZkb1VpV19VVkQ4ZTZKQUEiLCJ2ZXIiOiIxLjAiLCJ3aWRzIjpbIjYyZTkwMzk0LTY5ZjUtNDIzNy05MTkwLTAxMjE3NzE0NWUxMCIsImI3OWZiZjRkLTNlZjktNDY4OS04MTQzLTc2YjE5NGU4NTUwOSJdLCJ4bXNfcGwiOiJlbi1VUyJ9.Lt_W-Iewo5mJRtxp6hu49uCOYQzOl-4QQzD1Hoyof0Pql7Vu3VpAFqh_zAJAIww1IVHcpgU1gKIzUFtLV0ggrDnslFChu0xAemgAt2V8arBaW_AzRDww4SCK_oYVsd2pTm0sp21Rwp63lSEZZGa3RJfw0NZOkrRCOsIOQCRn3lNTxYFMfaP9fwSk35FZBMIidI94onJrBKuHxM9sdn-iL4v80Lg1xRxWF036x7G6Jx_GxO44TjYns0hjmsoHAZwrjMgxXcNYSKwVgIfqDNX740i8slvetCXC8-kRjKtixsg6w6v7H9c-yvoowub3esuvn-uhUOhPnzrg6F6Otai_CA\" meta [IsParameterQuery=true, Type=\"Text\", IsParameterQueryRequired=true]",
+        "kind": "m",
+        "lineageTag": "d75cd90e-2b62-422b-b5b3-70a5e079419d",
+        "queryGroup": "Parameters"
+      },
+      {
+        "name": "Expanded tenantSettings",
+        "annotations": [
+          {
+            "name": "PBI_NavigationStepName",
+            "value": "Navigation"
+          },
+          {
+            "name": "PBI_ResultType",
+            "value": "Table"
+          }
+        ],
+        "expression": [
+          "let",
+          "    Source = Json.Document(JsonResponse),",
+          "    #\"Converted to Table\" = Table.FromRecords({Source}),",
+          "    #\"Expanded tenantSettings\" = Table.ExpandListColumn(#\"Converted to Table\", \"tenantSettings\"),",
+          "    #\"Expanded tenantSettings1\" = Table.ExpandRecordColumn(",
+          "        #\"Expanded tenantSettings\",",
+          "        \"tenantSettings\",",
+          "        {",
+          "            \"settingName\",",
+          "            \"title\",",
+          "            \"enabled\",",
+          "            \"canSpecifySecurityGroups\",",
+          "            \"enabledSecurityGroups\",",
+          "            \"tenantSettingGroup\"",
+          "        },",
+          "        {",
+          "            \"settingName\",",
+          "            \"title\",",
+          "            \"enabled\",",
+          "            \"canSpecifySecurityGroups\",",
+          "            \"enabledSecurityGroups\",",
+          "            \"tenantSettingGroup\"",
+          "        }",
+          "    ),",
+          "    #\"Changed Type\" = Table.TransformColumnTypes(",
+          "        #\"Expanded tenantSettings1\",",
+          "        {",
+          "            {\"settingName\", type text},",
+          "            {\"title\", type text},",
+          "            {\"enabled\", type logical},",
+          "            {\"canSpecifySecurityGroups\", type logical},",
+          "            {\"tenantSettingGroup\", type text}",
+          "        }",
+          "    )",
+          "in",
+          "    #\"Changed Type\""
+        ],
+        "kind": "m",
+        "lineageTag": "259de9a1-eada-4f91-bfda-85b5df041df1",
+        "queryGroup": "Transform"
+      },
+      {
+        "name": "assertSetting (PublishToWeb = false)",
+        "annotations": [
+          {
+            "name": "PBI_NavigationStepName",
+            "value": "Navigation"
+          },
+          {
+            "name": "PBI_ResultType",
+            "value": "Logical"
+          }
+        ],
+        "expression": [
+          "let",
+          "    Source = (tenantSettings{[settingName = \"PublishToWeb\"]}[enabled] = false)",
+          "in",
+          "    Source"
+        ],
+        "kind": "m",
+        "lineageTag": "cf34d9ed-c0c9-44eb-8d54-32130ec96926"
+      },
+      {
+        "name": "assertSetting (PublishToWeb = true)",
+        "annotations": [
+          {
+            "name": "PBI_NavigationStepName",
+            "value": "Navigation"
+          },
+          {
+            "name": "PBI_ResultType",
+            "value": "Logical"
+          }
+        ],
+        "expression": [
+          "let",
+          "    Source = (let enabledSecurityGroups = tenantSettings{[settingName = \"PublishToWeb\"]}[enabledSecurityGroups]",
+          "     in try List.Count(enabledSecurityGroups) otherwise 0 > 0) and (tenantSettings{[settingName = \"PublishToWeb\"]}[enabled] = true)",
+          "in",
+          "    Source"
+        ],
+        "kind": "m",
+        "lineageTag": "d7d143f0-6609-4173-af78-11755662009b"
+      },
+      {
+        "name": "BPARulesFile",
+        "annotations": [
+          {
+            "name": "PBI_NavigationStepName",
+            "value": "Navigation"
+          },
+          {
+            "name": "PBI_ResultType",
+            "value": "Text"
+          }
+        ],
+        "description": "File path for local rule file containing Power Query expressions for assertion of tenant settings.",
+        "expression": "\"C:\\Users\\ClausThorningMadsen\\Downloads\\BPARules-TenantSettings.json\" meta [IsParameterQuery=true, Type=\"Text\", IsParameterQueryRequired=true]",
+        "kind": "m",
+        "lineageTag": "b87febea-60ae-4198-b1e2-ea152a8a3826",
+        "queryGroup": "Parameters"
+      }
+    ],
+    "queryGroups": [
+      {
+        "annotations": [
+          {
+            "name": "PBI_QueryGroupOrder",
+            "value": "0"
+          }
+        ],
+        "folder": "Parameters"
+      },
+      {
+        "annotations": [
+          {
+            "name": "PBI_QueryGroupOrder",
+            "value": "0"
+          }
+        ],
+        "folder": "Extract\\Anonymous Authorization"
+      },
+      {
+        "annotations": [
+          {
+            "name": "PBI_QueryGroupOrder",
+            "value": "3"
+          }
+        ],
+        "folder": "Load"
+      },
+      {
+        "annotations": [
+          {
+            "name": "PBI_QueryGroupOrder",
+            "value": "1"
+          }
+        ],
+        "folder": "Extract"
+      },
+      {
+        "annotations": [
+          {
+            "name": "PBI_QueryGroupOrder",
+            "value": "2"
+          }
+        ],
+        "folder": "Transform"
+      }
+    ],
+    "relationships": [
+      {
+        "name": "00d1baab-d67c-49a9-9817-febbd6d47ebe",
+        "fromColumn": "settingName",
+        "fromTable": "enabledSecurityGroups",
+        "toColumn": "settingName",
+        "toTable": "tenantSettings"
+      },
+      {
+        "name": "c36927ec-0d80-407d-97f1-139291902fcb",
+        "fromColumn": "Scope",
+        "fromTable": "bestPractiseRules",
+        "toColumn": "settingName",
+        "toTable": "tenantSettings"
+      }
+    ],
+    "sourceQueryCulture": "en-GB",
+    "tables": [
+      {
+        "name": "tenantSettings",
+        "annotations": [
+          {
+            "name": "PBI_ResultType",
+            "value": "Table"
+          }
+        ],
+        "columns": [
+          {
+            "name": "settingName",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "Automatic"
+              }
+            ],
+            "dataType": "string",
+            "lineageTag": "09ee5410-0f04-41ed-9d2f-f4b034fed0fc",
+            "sourceColumn": "settingName",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "title",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "Automatic"
+              }
+            ],
+            "dataType": "string",
+            "lineageTag": "fa9fe0f5-36f4-4b4f-b0be-e90fd8c334be",
+            "sourceColumn": "title",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "enabled",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "Automatic"
+              }
+            ],
+            "changedProperties": [
+              {
+                "property": "IsHidden"
+              }
+            ],
+            "dataType": "boolean",
+            "formatString": "\"TRUE\";\"TRUE\";\"FALSE\"",
+            "isHidden": true,
+            "lineageTag": "f9a07168-7f62-4cd9-8e07-22ae5939dc5e",
+            "sourceColumn": "enabled",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "canSpecifySecurityGroups",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "Automatic"
+              }
+            ],
+            "changedProperties": [
+              {
+                "property": "IsHidden"
+              }
+            ],
+            "dataType": "boolean",
+            "formatString": "\"TRUE\";\"TRUE\";\"FALSE\"",
+            "isHidden": true,
+            "lineageTag": "ca056273-67ec-45d5-8f28-0ddf9672959b",
+            "sourceColumn": "canSpecifySecurityGroups",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "tenantSettingGroup",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "Automatic"
+              }
+            ],
+            "dataType": "string",
+            "lineageTag": "fdd8b345-b56e-45ca-883f-24e06a0f8b1c",
+            "sourceColumn": "tenantSettingGroup",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "enabledSecurityGroups",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "Automatic"
+              }
+            ],
+            "dataType": "string",
+            "lineageTag": "af3c4265-1de6-495f-a5e8-3f738f3e806d",
+            "sourceColumn": "enabledSecurityGroups",
+            "summarizeBy": "none"
+          }
+        ],
+        "lineageTag": "720cd866-f692-4c97-b91b-f8f2d70b3a4a",
+        "measures": [
+          {
+            "name": "Is enabled",
+            "displayFolder": "Settings",
+            "expression": [
+              "",
+              "VAR _ShowValueForSetting = OR(",
+              "        ISINSCOPE( tenantSettings[settingName] ),",
+              "        ISINSCOPE( tenantSettings[title] )",
+              "    )",
+              "VAR _Result = IF(",
+              "    _ShowValueForSetting,",
+              "    SELECTEDVALUE( tenantSettings[enabled] ),",
+              "    \"\"",
+              ")",
+              "RETURN",
+              "    _Result"
+            ],
+            "formatString": "\"TRUE\";\"TRUE\";\"FALSE\"",
+            "lineageTag": "834a0f84-48bd-490f-9908-23e972f8cf45"
+          },
+          {
+            "name": "Can specify security group",
+            "annotations": [
+              {
+                "name": "PBI_FormatHint",
+                "value": "{\"isGeneralNumber\":true}"
+              }
+            ],
+            "displayFolder": "Settings",
+            "expression": [
+              "",
+              "VAR _ShowValueForSetting = OR(",
+              "        ISINSCOPE( tenantSettings[settingName] ),",
+              "        ISINSCOPE( tenantSettings[title] )",
+              "    )",
+              "VAR _Result = IF(",
+              "    _ShowValueForSetting,",
+              "    SELECTEDVALUE( tenantSettings[canSpecifySecurityGroups] ),",
+              "    \"\"",
+              ")",
+              "RETURN",
+              "    _Result"
+            ],
+            "lineageTag": "d4ec863f-11b4-4d8f-86f7-ea32608fc3c2"
+          }
+        ],
+        "partitions": [
+          {
+            "name": "tenantSettings-81b80bf9-e476-456e-8d2a-194951d5f4b6",
+            "mode": "import",
+            "queryGroup": "Load",
+            "source": {
+              "expression": [
+                "let",
+                "    Source = #\"Expanded tenantSettings\",",
+                "    #\"Removed Other Columns\" = Table.SelectColumns(Source,{\"settingName\", \"title\", \"enabled\", \"canSpecifySecurityGroups\", \"enabledSecurityGroups\", \"tenantSettingGroup\"})",
+                "in",
+                "    #\"Removed Other Columns\""
+              ],
+              "type": "m"
+            }
+          }
+        ]
+      },
+      {
+        "name": "DateTableTemplate_cbfe60e8-bc13-4097-959e-0eac3bdcbfac",
+        "annotations": [
+          {
+            "name": "__PBI_TemplateDateTable",
+            "value": "true"
+          },
+          {
+            "name": "DefaultItem",
+            "value": "DateHierarchy"
+          }
+        ],
+        "columns": [
+          {
+            "name": "Date",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "User"
+              }
+            ],
+            "dataCategory": "PaddedDateTableDates",
+            "dataType": "dateTime",
+            "isDataTypeInferred": true,
+            "isHidden": true,
+            "isNameInferred": true,
+            "lineageTag": "6d91c56f-fdb9-405f-98f2-84cd333be0f4",
+            "sourceColumn": "[Date]",
+            "summarizeBy": "none",
+            "type": "calculatedTableColumn"
+          },
+          {
+            "name": "Year",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "User"
+              },
+              {
+                "name": "TemplateId",
+                "value": "Year"
+              }
+            ],
+            "dataCategory": "Years",
+            "dataType": "int64",
+            "expression": "YEAR([Date])",
+            "isDataTypeInferred": true,
+            "isHidden": true,
+            "lineageTag": "0bfc71b8-6571-4588-b893-01eb4d062456",
+            "summarizeBy": "none",
+            "type": "calculated"
+          },
+          {
+            "name": "MonthNo",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "User"
+              },
+              {
+                "name": "TemplateId",
+                "value": "MonthNumber"
+              }
+            ],
+            "dataCategory": "MonthOfYear",
+            "dataType": "int64",
+            "expression": "MONTH([Date])",
+            "isDataTypeInferred": true,
+            "isHidden": true,
+            "lineageTag": "df448a7a-0632-487b-a493-7bdf980ba2c8",
+            "summarizeBy": "none",
+            "type": "calculated"
+          },
+          {
+            "name": "Month",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "User"
+              },
+              {
+                "name": "TemplateId",
+                "value": "Month"
+              }
+            ],
+            "dataCategory": "Months",
+            "dataType": "string",
+            "expression": "FORMAT([Date], \"MMMM\")",
+            "isDataTypeInferred": true,
+            "isHidden": true,
+            "lineageTag": "22d275e2-b250-4ebf-a584-dc13227dc797",
+            "sortByColumn": "MonthNo",
+            "summarizeBy": "none",
+            "type": "calculated"
+          },
+          {
+            "name": "QuarterNo",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "User"
+              },
+              {
+                "name": "TemplateId",
+                "value": "QuarterNumber"
+              }
+            ],
+            "dataCategory": "QuarterOfYear",
+            "dataType": "int64",
+            "expression": "INT(([MonthNo] + 2) / 3)",
+            "isDataTypeInferred": true,
+            "isHidden": true,
+            "lineageTag": "8bea7645-2134-48fd-9cec-6ecaf91eaf68",
+            "summarizeBy": "none",
+            "type": "calculated"
+          },
+          {
+            "name": "Quarter",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "User"
+              },
+              {
+                "name": "TemplateId",
+                "value": "Quarter"
+              }
+            ],
+            "dataCategory": "Quarters",
+            "dataType": "string",
+            "expression": "\"Qtr \" & [QuarterNo]",
+            "isDataTypeInferred": true,
+            "isHidden": true,
+            "lineageTag": "99b79e61-715a-408d-b943-e3aa790282da",
+            "sortByColumn": "QuarterNo",
+            "summarizeBy": "none",
+            "type": "calculated"
+          },
+          {
+            "name": "Day",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "User"
+              },
+              {
+                "name": "TemplateId",
+                "value": "Day"
+              }
+            ],
+            "dataCategory": "DayOfMonth",
+            "dataType": "int64",
+            "expression": "DAY([Date])",
+            "isDataTypeInferred": true,
+            "isHidden": true,
+            "lineageTag": "2c205fb4-7cbf-4182-a886-aab301408b76",
+            "summarizeBy": "none",
+            "type": "calculated"
+          }
+        ],
+        "hierarchies": [
+          {
+            "name": "Date Hierarchy",
+            "annotations": [
+              {
+                "name": "TemplateId",
+                "value": "DateHierarchy"
+              }
+            ],
+            "levels": [
+              {
+                "name": "Year",
+                "column": "Year",
+                "lineageTag": "7cea5c0c-1738-4cde-902e-3f99b2e78f28",
+                "ordinal": 0
+              },
+              {
+                "name": "Quarter",
+                "column": "Quarter",
+                "lineageTag": "b2e40cc1-7d6c-44aa-be53-428daf1e037c",
+                "ordinal": 1
+              },
+              {
+                "name": "Month",
+                "column": "Month",
+                "lineageTag": "af00addf-5d56-4cc7-afbc-58ef1ee27a77",
+                "ordinal": 2
+              },
+              {
+                "name": "Day",
+                "column": "Day",
+                "lineageTag": "1a9dcbce-23ef-4e13-a8a9-bda0240fdbcd",
+                "ordinal": 3
+              }
+            ],
+            "lineageTag": "b39967ac-af1e-475a-9f0b-b0cd616c8ab1"
+          }
+        ],
+        "isHidden": true,
+        "isPrivate": true,
+        "lineageTag": "1f00f869-50b6-4d01-90cf-8f6d5162ea9d",
+        "partitions": [
+          {
+            "name": "DateTableTemplate_cbfe60e8-bc13-4097-959e-0eac3bdcbfac-16904d6b-1b3a-47ab-af3d-6e1db71970f6",
+            "mode": "import",
+            "source": {
+              "expression": "Calendar(Date(2015,1,1), Date(2015,1,1))",
+              "type": "calculated"
+            }
+          }
+        ]
+      },
+      {
+        "name": "enabledSecurityGroups",
+        "annotations": [
+          {
+            "name": "PBI_ResultType",
+            "value": "Table"
+          }
+        ],
+        "columns": [
+          {
+            "name": "settingName",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "Automatic"
+              }
+            ],
+            "dataType": "string",
+            "lineageTag": "c3d7636e-fab5-4864-b6fa-d58291845618",
+            "sourceColumn": "settingName",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "enabledSecurityGroups.graphId",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "Automatic"
+              }
+            ],
+            "dataType": "string",
+            "lineageTag": "d5f727c3-0788-48c0-b8fa-fa1c06201cab",
+            "sourceColumn": "enabledSecurityGroups.graphId",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "enabledSecurityGroups.name",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "Automatic"
+              }
+            ],
+            "dataType": "string",
+            "lineageTag": "511bfaee-b065-4ff7-830b-fa83db0b529d",
+            "sourceColumn": "enabledSecurityGroups.name",
+            "summarizeBy": "none"
+          }
+        ],
+        "lineageTag": "34fce500-3725-41ae-be6e-e80ddd98d9c5",
+        "partitions": [
+          {
+            "name": "enabledSecurityGroups",
+            "mode": "import",
+            "queryGroup": "Load",
+            "source": {
+              "expression": [
+                "let",
+                "    Source = #\"Expanded tenantSettings\",",
+                "    #\"Removed Other Columns\" = Table.SelectColumns(Source, {\"settingName\", \"enabledSecurityGroups\"}),",
+                "    #\"Expanded enabledSecurityGroups\" = Table.ExpandListColumn(#\"Removed Other Columns\", \"enabledSecurityGroups\"),",
+                "    #\"Expanded enabledSecurityGroups1\" = Table.ExpandRecordColumn(",
+                "        #\"Expanded enabledSecurityGroups\",",
+                "        \"enabledSecurityGroups\",",
+                "        {\"graphId\", \"name\"},",
+                "        {\"enabledSecurityGroups.graphId\", \"enabledSecurityGroups.name\"}",
+                "    ),",
+                "    #\"Filtered Rows\" = Table.SelectRows(#\"Expanded enabledSecurityGroups1\", each [enabledSecurityGroups.graphId] <> null and [enabledSecurityGroups.graphId] <> \"\")",
+                "in",
+                "    #\"Filtered Rows\""
+              ],
+              "type": "m"
+            }
+          }
+        ]
+      },
+      {
+        "name": "bestPractiseRules",
+        "annotations": [
+          {
+            "name": "PBI_ResultType",
+            "value": "Exception"
+          }
+        ],
+        "columns": [
+          {
+            "name": "ID",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "Automatic"
+              }
+            ],
+            "dataType": "string",
+            "lineageTag": "16a527be-ac4e-4a9e-84bb-05c3cfd9319f",
+            "sourceColumn": "ID",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "Name",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "Automatic"
+              }
+            ],
+            "dataType": "string",
+            "lineageTag": "ba663219-0d0f-4376-8078-e4f2b334a994",
+            "sourceColumn": "Name",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "Category",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "Automatic"
+              }
+            ],
+            "dataType": "string",
+            "lineageTag": "05c23cb9-9aec-40d4-a934-d491c56fc4c0",
+            "sourceColumn": "Category",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "Description",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "Automatic"
+              }
+            ],
+            "dataType": "string",
+            "lineageTag": "be973568-82f5-4c7c-a59f-a190dd4a3dfd",
+            "sourceColumn": "Description",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "Severity",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "User"
+              }
+            ],
+            "dataType": "int64",
+            "formatString": "0",
+            "lineageTag": "3c404b48-a869-4c78-93e3-ec2b0fb641bd",
+            "sourceColumn": "Severity",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "Scope",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "Automatic"
+              }
+            ],
+            "dataType": "string",
+            "lineageTag": "313bf1f5-20de-439f-a969-ad4a58e6253d",
+            "sourceColumn": "Scope",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "Expression",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "Automatic"
+              }
+            ],
+            "dataType": "string",
+            "lineageTag": "2ea00928-5206-47a9-b965-724c78ea1175",
+            "sourceColumn": "Expression",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "Assertion",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "Automatic"
+              }
+            ],
+            "dataType": "string",
+            "lineageTag": "7bee8199-5198-486c-a43f-b6368efd472e",
+            "sourceColumn": "Assertion",
+            "summarizeBy": "none"
+          }
+        ],
+        "lineageTag": "64ca75fd-13da-4fd0-b661-0713c700d109",
+        "measures": [
+          {
+            "name": "BPA Icon",
+            "expression": [
+              "",
+              "VAR _ShowValueForSetting = OR(",
+              "        ISINSCOPE( bestPractiseRules[ID] ),",
+              "        ISINSCOPE( bestPractiseRules[Name] )",
+              "    )",
+              "VAR _Result = IF(",
+              "    _ShowValueForSetting,",
+              "    SWITCH(",
+              "        TRUE(),",
+              "        SELECTEDVALUE( bestPractiseRules[Assertion] ) = \"true\", \"CircleSymbolHigh\",",
+              "        SELECTEDVALUE( bestPractiseRules[Assertion] ) = \"false\", \"CircleSymbolLow\",",
+              "        \"CircleSymbolMedium\"",
+              "    ),",
+              "    \"\"",
+              ")",
+              "RETURN",
+              "    _Result"
+            ],
+            "lineageTag": "06ba17af-1144-45b9-985b-8a2c97bc6db8"
+          }
+        ],
+        "partitions": [
+          {
+            "name": "bestPractiseRules",
+            "mode": "import",
+            "queryGroup": "Load",
+            "source": {
+              "expression": [
+                "let",
+                "    Source = Json.Document(File.Contents(BPARulesFile)),",
+                "    #\"Converted to Table\" = Table.FromList(Source, Splitter.SplitByNothing(), null, null, ExtraValues.Error),",
+                "    #\"Expanded Column1\" = Table.ExpandRecordColumn(#\"Converted to Table\", \"Column1\", {\"ID\", \"Name\", \"Category\", \"Description\", \"Severity\", \"Scope\", \"Expression\"}, {\"ID\", \"Name\", \"Category\", \"Description\", \"Severity\", \"Scope\", \"Expression\"}),",
+                "    #\"Changed Type\" = Table.TransformColumnTypes(#\"Expanded Column1\",{{\"ID\", type text}, {\"Name\", type text}, {\"Category\", type text}, {\"Description\", type text}, {\"Severity\", Int64.Type}, {\"Scope\", type text}, {\"Expression\", type text}}),",
+                "    #\"Added Assertion\" = Table.AddColumn(#\"Changed Type\", \"Assertion\", each try Logical.ToText(Expression.Evaluate([Expression], #shared)) otherwise \"error\", type text),",
+                "    #\"Merged Queries\" = Table.NestedJoin(#\"Added Assertion\", {\"Scope\"}, tenantSettings, {\"settingName\"}, \"tenantSettings\", JoinKind.Inner),",
+                "    #\"Removed Other Columns\" = Table.SelectColumns(#\"Merged Queries\",{\"ID\", \"Name\", \"Category\", \"Description\", \"Severity\", \"Scope\", \"Expression\", \"Assertion\"})",
+                "in",
+                "    #\"Removed Other Columns\""
+              ],
+              "type": "m"
+            }
+          }
+        ]
+      }
+    ]
+  }
+}
